@@ -3,7 +3,7 @@ BINARY_NAME = countries
 
 GOBASE = $(shell pwd)
 CMD = $(GOBASE)/cmd
-GOFILES = $(wildcard $(CMD)/*/*.go)
+GOFILES = $(CMD)/countries/*.go
 GOBIN = $(GOBASE)/bin
 
 all: build

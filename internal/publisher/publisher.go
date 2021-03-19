@@ -11,16 +11,15 @@ type Publisher interface {
 }
 
 type StdoutPublisher struct {
+	Template *template.Template
 }
 
-func NewStdoutPublisher() StdoutPublisher {
-	return StdoutPublisher{}
-}
+func NewStdoutPublisher() *StdoutPublisher {
+	publisher := &StdoutPublisher {
+		template.New("PrintCountry"),
+	}
 
-func (p *StdoutPublisher) Output(countires []countries.Country) {
-	template := template.New("PrintCountry")
-	templatePattern :=
-		`name: {{ .Name }}
+	templatePattern := `name: {{ .Name }}
 capital: {{ .Capital }}
 region: {{ .Region }}
 subregion: {{ .Subregion }}
@@ -33,9 +32,15 @@ currencies: {{ range $v := .Currencies }}
    symbol: {{$v.Symbol}}{{ end }}
 
 `
-	template.Parse(templatePattern)
+	if _, err := publisher.Template.Parse(templatePattern); err != nil {
+		panic("publisher didn't parse template")
+	}
 
-	for _, country := range countires {
-		template.Execute(os.Stdout, country)
+	return publisher
+}
+
+func (p *StdoutPublisher) Output(aCountries []countries.Country) {
+	for _, country := range aCountries {
+		p.Template.Execute(os.Stdout, country)
 	}
 }
