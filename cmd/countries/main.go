@@ -2,32 +2,42 @@ package main
 
 import (
 	"fmt"
-	"github.com/awnzl/lgTask1/internal/countryparser"
 	"github.com/awnzl/lgTask1/internal/finder"
-	"github.com/awnzl/lgTask1/internal/publisher"
+	"github.com/awnzl/lgTask1/internal/parser"
+	"github.com/awnzl/lgTask1/internal/writer"
 	"os"
 )
 
 func main() {
-	cfg := ParseConfig()
-
-	file, err := os.OpenFile("../countries.json", os.O_RDONLY, 0400)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	parsedCountries, err := countryparser.NewParser().Parse(file)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	foundCountries, err := finder.NewFinder().Find(cfg.SearchOption, cfg.SearchArgument, parsedCountries)
+	cfg, err := ParseConfig()
 
 	if err != nil {
-		fmt.Println(fmt.Sprintf("%v: %v", err, cfg.SearchArgument))
+		os.Exit(0)
 	}
 
-	if foundCountries != nil {
-		publisher.NewStdoutPublisher().Output(foundCountries)
+	const filename = "../countries.json"
+	file, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("Can't open file:", filename)
+		fmt.Println("Error:", err)
+		os.Exit(0)
+	}
+
+	parsedCountries, err := parser.New().Parse(file)
+	if err != nil {
+		fmt.Println("File parsing error:", filename)
+		fmt.Println("Error:", err)
+		os.Exit(0)
+	}
+
+	foundCountries := finder.New().Find(cfg.SearchOption, cfg.SearchArgument, parsedCountries)
+
+	switch {
+	case foundCountries != nil:
+		if err := writer.New(os.Stdout).Write(foundCountries); err != nil {
+			fmt.Println(err)
+		}
+	default:
+		fmt.Println(fmt.Sprintf("can't find country with entered argument: %v", cfg.SearchArgument))
 	}
 }

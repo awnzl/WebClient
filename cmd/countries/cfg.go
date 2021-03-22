@@ -1,45 +1,59 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
-	"os"
+	"github.com/awnzl/lgTask1/internal/finder"
 )
 
+var ParseArgsError = errors.New("cfg: incorrect argument")
+
 type Config struct {
-	SearchOption string
+	SearchOption finder.SearchOption
 	SearchArgument string
 }
 
-func ParseConfig() Config {
+func ParseConfig() (Config, error) {
 	defineFlags()
+	flag.Usage = usage
 	flag.Parse()
 
-	searchOption, searchArgument := "", ""
+	option, argument := finder.SearchOptionUndefined, ""
 	flag.Visit(func(f *flag.Flag) {
-		if f.Value.String() != "" {
-			searchOption = f.Name
-			searchArgument = f.Value.String()
+		switch f.Value.String() != "" {
+		case f.Name == "currency-code":
+			option, argument = finder.SearchOptionCurrencyCode, f.Value.String()
+		case f.Name == "lang-code":
+			option, argument = finder.SearchOptionLang, f.Value.String()
+		case f.Name == "name":
+			option, argument = finder.SearchOptionName, f.Value.String()
 		}
 	})
 
-	if searchOption == "" && len(flag.Args()) > 0 {
-		searchOption = "country-code"
-		searchArgument = flag.Args()[0]
+	if option == finder.SearchOptionUndefined && len(flag.Args()) > 0 {
+		option, argument = finder.SearchOptionCountryCode, flag.Args()[0]
 	}
 
-	if searchArgument == "" {
-		fmt.Fprintf(os.Stderr, "Usage of %s:\n  .%s country_code|--flag=value\n",
-			os.Args[0], os.Args[0])
-		flag.PrintDefaults()
-		os.Exit(0)
+	if option == finder.SearchOptionUndefined {
+		fmt.Println(ParseArgsError, argument)
+		flag.Usage()
+		return Config{}, ParseArgsError
 	}
 
-	return Config{searchOption, searchArgument}
+	return Config{
+		SearchOption: option,
+		SearchArgument: argument,
+	}, nil
 }
 
 func defineFlags() {
 	flag.String("currency-code", "", "--currency-code=cad")
+	flag.String("lang-code", "", "--lang-code=en")
 	flag.String("name", "", "--name=Canada")
-	flag.String("lang", "", "--lang-code=en")
+}
+
+func usage() {
+	fmt.Println("Usage of countries: [--currency-code=code|--lang-code=lang|--name=name] | country_code")
+	flag.PrintDefaults()
 }
