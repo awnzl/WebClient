@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/awnzl/lgTask1/internal/finder"
 	"github.com/awnzl/lgTask1/internal/parser"
 	"github.com/awnzl/lgTask1/internal/writer"
-	"os"
 )
 
 func main() {
@@ -23,18 +24,21 @@ func main() {
 		os.Exit(0)
 	}
 
-	parsedCountries, err := parser.New().Parse(file)
+	parser := parser.New()
+	parsedCountries, err := parser.Parse(file)
 	if err != nil {
 		fmt.Println("File parsing error:", filename)
 		fmt.Println("Error:", err)
 		os.Exit(0)
 	}
 
-	foundCountries := finder.New().Find(cfg.SearchOption, cfg.SearchArgument, parsedCountries)
+	finder := finder.New()
+	foundCountries := finder.Find(cfg.SearchOption, cfg.SearchArgument, parsedCountries)
 
 	switch {
 	case foundCountries != nil:
-		if err := writer.New(os.Stdout).Write(foundCountries); err != nil {
+		writer := writer.New(os.Stdout)
+		if err := writer.Write(foundCountries); err != nil {
 			fmt.Println(err)
 		}
 	default:

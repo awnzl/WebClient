@@ -1,5 +1,5 @@
-GOBUILD = go build
 BINARY_NAME = countries
+GOBUILD = go build
 
 GOBASE = $(shell pwd)
 CMD = $(GOBASE)/cmd

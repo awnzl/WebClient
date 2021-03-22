@@ -4,13 +4,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+
 	"github.com/awnzl/lgTask1/internal/finder"
 )
 
 var ParseArgsError = errors.New("cfg: incorrect argument")
 
 type Config struct {
-	SearchOption finder.SearchOption
+	SearchOption   finder.SearchOption
 	SearchArgument string
 }
 
@@ -42,7 +43,7 @@ func ParseConfig() (Config, error) {
 	}
 
 	return Config{
-		SearchOption: option,
+		SearchOption:   option,
 		SearchArgument: argument,
 	}, nil
 }

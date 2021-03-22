@@ -1,9 +1,10 @@
 package writer
 
 import (
-	"github.com/awnzl/lgTask1/internal/countries"
 	"io"
 	"text/template"
+
+	"github.com/awnzl/lgTask1/internal/countries"
 )
 
 const outputTemplate = `name: {{ .Name }}
@@ -22,13 +23,13 @@ currencies: {{ range $v := .Currencies }}
 
 type Writer struct {
 	Template *template.Template
-	writer io.Writer
+	writer   io.Writer
 }
 
 func New(aWriter io.Writer) *Writer {
 	writer := &Writer{
-		template.New("PrintCountry"),
-		aWriter,
+		Template: template.New("PrintCountry"),
+		writer:   aWriter,
 	}
 
 	if _, err := writer.Template.Parse(outputTemplate); err != nil {

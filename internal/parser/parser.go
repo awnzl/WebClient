@@ -2,9 +2,10 @@ package parser
 
 import (
 	"encoding/json"
-	"github.com/awnzl/lgTask1/internal/countries"
 	"io"
 	"io/ioutil"
+
+	"github.com/awnzl/lgTask1/internal/countries"
 )
 
 type Parser struct { }
