@@ -5,22 +5,22 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/awnzl/lgTask1/internal/countries"
+	"github.com/awnzl/lgTask1/internal/country"
 )
 
-type Parser struct { }
+type Parser struct{}
 
 func New() *Parser {
 	return &Parser{}
 }
 
-func (parser *Parser) Parse(r io.Reader) ([]countries.Country, error) {
+func (parser *Parser) Parse(r io.Reader) ([]country.Country, error) {
 	data, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
 
-	var countries = make([]countries.Country, 0)
+	var countries []country.Country
 	err = json.Unmarshal(data, &countries)
 
 	return countries, err

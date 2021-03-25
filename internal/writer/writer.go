@@ -4,7 +4,7 @@ import (
 	"io"
 	"text/template"
 
-	"github.com/awnzl/lgTask1/internal/countries"
+	"github.com/awnzl/lgTask1/internal/country"
 )
 
 const outputTemplate = `name: {{ .Name }}
@@ -39,11 +39,12 @@ func New(aWriter io.Writer) *Writer {
 	return writer
 }
 
-func (p *Writer) Write(aCountries []countries.Country) error {
-	for _, country := range aCountries {
-		if err := p.Template.Execute(p.writer, country); err != nil {
+func (p *Writer) Write(countries []country.Country) error {
+	for _, c := range countries {
+		if err := p.Template.Execute(p.writer, c); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }

@@ -8,8 +8,6 @@ GOBIN = $(GOBASE)/bin
 
 all: build
 
-deb:
-
 build:
 	$(GOBUILD) -o $(GOBIN)/$(BINARY_NAME) $(GOFILES)
 

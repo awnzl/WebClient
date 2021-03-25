@@ -3,7 +3,7 @@ package finder
 import (
 	"strings"
 
-	"github.com/awnzl/lgTask1/internal/countries"
+	"github.com/awnzl/lgTask1/internal/country"
 )
 
 type SearchOption string
@@ -20,13 +20,13 @@ func (o SearchOption) String() string {
 	return string(o)
 }
 
-type Finder struct { }
+type Finder struct{}
 
 func New() *Finder {
 	return &Finder{}
 }
 
-func (finder *Finder) Find(option SearchOption, argument string, collection []countries.Country) []countries.Country {
+func (finder *Finder) Find(option SearchOption, argument string, collection []country.Country) []country.Country {
 	switch option {
 	case SearchOptionCurrencyCode:
 		return finder.FindByCurrencyCode(argument, collection)
@@ -39,12 +39,13 @@ func (finder *Finder) Find(option SearchOption, argument string, collection []co
 	}
 }
 
-func (finder *Finder) FindByCode(countryCode string, collection []countries.Country) []countries.Country {
-	var foundCountries []countries.Country
+func (finder *Finder) FindByCode(countryCode string, collection []country.Country) []country.Country {
+	var foundCountries []country.Country
 
 	for _, country := range collection {
 		if strings.EqualFold(countryCode, country.Alpha3Code) ||
 			strings.EqualFold(countryCode, country.Alpha2Code) {
+
 			foundCountries = append(foundCountries, country)
 			break
 		}
@@ -53,8 +54,8 @@ func (finder *Finder) FindByCode(countryCode string, collection []countries.Coun
 	return foundCountries
 }
 
-func (finder *Finder) FindByCurrencyCode(currencyCode string, collection []countries.Country) []countries.Country {
-	var foundCountries []countries.Country
+func (finder *Finder) FindByCurrencyCode(currencyCode string, collection []country.Country) []country.Country {
+	var foundCountries []country.Country
 
 	for _, country := range collection {
 		for _, currency := range country.Currencies {
@@ -67,8 +68,8 @@ func (finder *Finder) FindByCurrencyCode(currencyCode string, collection []count
 	return foundCountries
 }
 
-func (finder *Finder) FindByLang(langIsoCode string, collection []countries.Country) []countries.Country {
-	var foundCountries []countries.Country
+func (finder *Finder) FindByLang(langIsoCode string, collection []country.Country) []country.Country {
+	var foundCountries []country.Country
 
 	for _, country := range collection {
 		for _, language := range country.Languages {
@@ -81,8 +82,8 @@ func (finder *Finder) FindByLang(langIsoCode string, collection []countries.Coun
 	return foundCountries
 }
 
-func (finder *Finder) FindByName(name string, collection []countries.Country) []countries.Country {
-	var foundCountries []countries.Country
+func (finder *Finder) FindByName(name string, collection []country.Country) []country.Country {
+	var foundCountries []country.Country
 
 	for _, country := range collection {
 		if strings.Contains(strings.ToLower(country.Name), strings.ToLower(name)) {

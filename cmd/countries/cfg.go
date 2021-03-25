@@ -8,38 +8,30 @@ import (
 	"github.com/awnzl/lgTask1/internal/finder"
 )
 
-var ParseArgsError = errors.New("cfg: incorrect argument")
+var ErrParseArgs = errors.New("cfg: incorrect argument")
 
 type Config struct {
 	SearchOption   finder.SearchOption
 	SearchArgument string
 }
 
-func ParseConfig() (Config, error) {
-	defineFlags()
+func parseConfig() (Config, error) {
+	var currencyCode, langCode, name string
+
+	flag.StringVar(&currencyCode, "currency-code", "", "--currency-code=cad")
+	flag.StringVar(&langCode, "lang-code", "", "--lang-code=en")
+	flag.StringVar(&name, "name", "", "--name=Canada")
+
 	flag.Usage = usage
 	flag.Parse()
 
-	option, argument := finder.SearchOptionUndefined, ""
-	flag.Visit(func(f *flag.Flag) {
-		switch f.Value.String() != "" {
-		case f.Name == "currency-code":
-			option, argument = finder.SearchOptionCurrencyCode, f.Value.String()
-		case f.Name == "lang-code":
-			option, argument = finder.SearchOptionLang, f.Value.String()
-		case f.Name == "name":
-			option, argument = finder.SearchOptionName, f.Value.String()
-		}
-	})
-
-	if option == finder.SearchOptionUndefined && len(flag.Args()) > 0 {
-		option, argument = finder.SearchOptionCountryCode, flag.Args()[0]
-	}
+	option, argument := parseOptions(currencyCode, langCode, name)
 
 	if option == finder.SearchOptionUndefined {
-		fmt.Println(ParseArgsError, argument)
+		fmt.Println(ErrParseArgs, argument)
 		flag.Usage()
-		return Config{}, ParseArgsError
+
+		return Config{}, ErrParseArgs
 	}
 
 	return Config{
@@ -48,10 +40,19 @@ func ParseConfig() (Config, error) {
 	}, nil
 }
 
-func defineFlags() {
-	flag.String("currency-code", "", "--currency-code=cad")
-	flag.String("lang-code", "", "--lang-code=en")
-	flag.String("name", "", "--name=Canada")
+func parseOptions(currencyCode, langCode, name string) (finder.SearchOption, string) {
+	switch {
+	case currencyCode != "":
+		return finder.SearchOptionCurrencyCode, currencyCode
+	case langCode != "":
+		return finder.SearchOptionLang, langCode
+	case name != "":
+		return finder.SearchOptionName, name
+	case len(flag.Args()) > 0:
+		return finder.SearchOptionCountryCode, flag.Args()[0]
+	default:
+		return finder.SearchOptionUndefined, ""
+	}
 }
 
 func usage() {
