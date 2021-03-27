@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
 )
 
-const COUNTRY_JSON = `
+const countryJSON = `
 {
     "name": "United States of America",
     "topLevelDomain": [
@@ -97,33 +97,30 @@ const COUNTRY_JSON = `
 `
 
 func TestCountryUnmarshaling(t *testing.T) {
-	in := []byte(COUNTRY_JSON)
 	want := Country{
-		Name: "United States of America",
+		Name:       "United States of America",
 		Alpha2Code: "US",
 		Alpha3Code: "USA",
-		Capital: "Washington, D.C.",
-		Region: "Americas",
-		Subregion: "Northern America",
+		Capital:    "Washington, D.C.",
+		Region:     "Americas",
+		Subregion:  "Northern America",
 		Population: 323947000,
 		Languages: []LanguageInfo{
-			LanguageInfo{ LanguageIsoCode: "en"},
+			LanguageInfo{LanguageIsoCode: "en"},
 		},
 		Currencies: []CurrencyInfo{
 			CurrencyInfo{
-				Code: "USD",
-				Name: "United States dollar",
+				Code:   "USD",
+				Name:   "United States dollar",
 				Symbol: "$",
 			},
 		},
 	}
 
 	var got Country
-	if err := json.Unmarshal(in, &got); err != nil {
+	if err := json.Unmarshal([]byte(countryJSON), &got); err != nil {
 		t.Errorf("some error occured during unmarshalling")
 	}
 
-	if !cmp.Equal(got, want) {
-		t.Errorf("Unmarshalling Country fails.\nGot:\n\t%q\nExpect:\n\t%q\n", got, want)
-	}
+	assert.Equal(t, want, got, "Unmarshalling Country fails")
 }
