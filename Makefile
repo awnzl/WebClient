@@ -1,21 +1,29 @@
-BINARY_NAME = countries
-GOBUILD = go build
-GOTEST = go test
+GOBUILD	:= go build
+GOTEST	:= go test
 
-GOBASE = $(shell pwd)
-CMD = $(GOBASE)/cmd
-GOFILES = $(CMD)/countries/*.go
-GOBIN = $(GOBASE)/bin
+GOBASE	:= $(shell pwd)
+CMD		:= $(GOBASE)/cmd
+GOBIN	:= $(GOBASE)/bin
 
-GOTESTFILES = $(GOBASE)/internal/country/*.go
+APPS	:= $(notdir $(wildcard $(CMD)/*))
+TESTS	:= $(GOBASE)/internal/*
 
+define BUILD
+$(GOBUILD) -o $(GOBIN)/$(1) $(CMD)/$(1)/*.go
+
+endef
+
+.PHONY: all
 all: build
 
+.PHONY: build
 build:
-	$(GOBUILD) -o $(GOBIN)/$(BINARY_NAME) $(GOFILES)
+	$(foreach app,$(APPS),$(call BUILD,$(app)))
 
+.PHONY: test
 test:
-	$(GOTEST) $(GOTESTFILES)
+	$(GOTEST) $(TESTS)
 
+.PHONY: clean
 clean:
-	rm $(GOBIN)/$(BINARY_NAME)
+	rm -rf $(GOBIN)/$(BINARY_NAME)
