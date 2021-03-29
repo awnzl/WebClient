@@ -1,6 +1,7 @@
 package countryservice
 
 import (
+	"fmt"
 	"github.com/awnzl/lgTask1/internal/country"
 )
 
@@ -43,16 +44,11 @@ func New(client WebClient, writer Writer) *Service {
 
 func (s *Service) Search(option SearchOption, arg string) error {
 	countries, err := s.getCountries(option, arg)
-
 	if err != nil {
-		return err
+		return fmt.Errorf("%w for %v %v", err, option, arg);
 	}
 
-	if err := s.writer.Write(countries); err != nil {
-		return err
-	}
-
-	return nil
+	return s.writer.Write(countries)
 }
 
 func (s *Service) getCountries(option SearchOption, arg string) ([]country.Country, error) {
