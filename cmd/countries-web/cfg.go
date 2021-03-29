@@ -5,13 +5,13 @@ import (
 	"flag"
 	"fmt"
 
-	webclient "github.com/awnzl/lgTask1/internal/web_client"
+	"github.com/awnzl/lgTask1/internal/countryservice"
 )
 
 var ErrParseArgs = errors.New("cfg: incorrect argument")
 
 type Config struct {
-	SearchOption   webclient.SearchOption
+	SearchOption   countryservice.SearchOption
 	SearchArgument string
 }
 
@@ -27,7 +27,7 @@ func parseConfig() (Config, error) {
 
 	option, argument := parseOptions(currencyCode, langCode, name)
 
-	if option == webclient.SearchOptionUndefined {
+	if option == countryservice.SearchOptionUndefined {
 		fmt.Println(ErrParseArgs, argument)
 		flag.Usage()
 
@@ -40,18 +40,18 @@ func parseConfig() (Config, error) {
 	}, nil
 }
 
-func parseOptions(currencyCode, langCode, name string) (webclient.SearchOption, string) {
+func parseOptions(currencyCode, langCode, name string) (countryservice.SearchOption, string) {
 	switch {
 	case currencyCode != "":
-		return webclient.SearchOptionCurrencyCode, currencyCode
+		return countryservice.SearchOptionCurrencyCode, currencyCode
 	case langCode != "":
-		return webclient.SearchOptionLang, langCode
+		return countryservice.SearchOptionLang, langCode
 	case name != "":
-		return webclient.SearchOptionName, name
+		return countryservice.SearchOptionName, name
 	case len(flag.Args()) > 0:
-		return webclient.SearchOptionCountryCode, flag.Args()[0]
+		return countryservice.SearchOptionCountryCode, flag.Args()[0]
 	default:
-		return webclient.SearchOptionUndefined, ""
+		return countryservice.SearchOptionUndefined, ""
 	}
 }
 
