@@ -9,8 +9,8 @@ import (
 type SearchOption string
 
 const (
-	SearchOptionCountryCode  SearchOption = "country_code"
-	SearchOptionCurrencyCode SearchOption = "currency_code"
+	SearchOptionCountryCode  SearchOption = "country-code"
+	SearchOptionCurrencyCode SearchOption = "currency-code"
 	SearchOptionLang         SearchOption = "lang-code"
 	SearchOptionName         SearchOption = "name"
 	SearchOptionUndefined    SearchOption = "undefined"
