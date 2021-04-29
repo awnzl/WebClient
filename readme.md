@@ -1,1 +1,1 @@
-Learn Go!
+Simple web client
